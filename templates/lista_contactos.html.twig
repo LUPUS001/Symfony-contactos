@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+{% block title %}Lista de contactos
+{% endblock %}
+{% block body %}
+	<h1>Contactos que contengan: {{ textoBuscado }}</h1>
+
+	{% if contactoABuscar %}
+		<ul>
+            {% for contactoEncontrado in contactoABuscar %}
+                <li>
+                    {{ contactoEncontrado.nombre }}
+                </li>
+            {% endfor %}
+		</ul>
+	{% else %}
+		<h3>No hay ningún contacto que se llame
+			{{ textoBuscado }}</h3>
+	{% endif %}
+{% endblock %}
