@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+{% block title %}Nuevo contacto{% endblock %}
+{% block body %}
+    <h1>Nuevo contacto</h1>
+    
+    {# El formulario que hemos enviado desde el return $this->render #}
+    {{ form(formulario) }}
+
+{# Hasta ahora haciamos algo así:     
+    <p>Nombre: {{ contacto.nombre }}</p>
+    <p>Telefono: {{ contacto.telefono }}</p>
+    <p>Email: {{ contacto.email }}</p> 
+  Pero esto solamente nos servía para recibir y mostrar los datos (GET)
+   no enviarlos (POST) cosa de la que se encarga el form   
+#}
+{% endblock %}

@@ -4,21 +4,15 @@ namespace App\Controller;
 
 use App\Entity\Contacto;
 use App\Entity\Provincia;
+use App\Form\ContactoType;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class ContactoController extends AbstractController
 {
-    private $contactos = [
-        1=> ["nombre" => "Alberto", "telefono" => "68654125", "email" => "alberto@ieselcaminas.org"],
-        2=> ["nombre" => "Julio", "telefono" => "641235636", "email" => "julio@ieselcaminas.org"],
-        3=> ["nombre" => "Cristina", "telefono" => "65412568", "email" => "cristina@ieselcaminas.org"],
-        4=> ["nombre" => "Maria", "telefono" => "685741234", "email" => "maria@ieselcaminas.org"],
-        5=> ["nombre" => "Juan", "telefono" => "645268942", "email" => "juan@ieselcaminas.org"],
-    ];
-
     #[Route('/contacto/insertar/provincia', name: 'insertar_contacto_con_provincia')]
     public function insertarConProvincia(ManagerRegistry $doctrine): Response
     {
@@ -68,16 +62,16 @@ final class ContactoController extends AbstractController
             'contacto' => $contacto
         ]);
     }
-    
+
 
     // Ejercicio 2.7.1.2
     #[Route('/contacto/buscar/conprovincia', name: 'buscar_contacto_con_provincia')]
     public function buscarContactoConProvincia(ManagerRegistry $doctrine): Response
     {
         $repositorio = $doctrine->getRepository(Contacto::class);
-        
+
         $contacto = $repositorio->find(11);
-        
+
         // Si lo hicieramos asi: "$provincia = $repositorio->getProvincia();" no encontraria el metodo getProvincia()
         $provincia = $contacto->getProvincia()->getNombre();
 
@@ -122,7 +116,7 @@ final class ContactoController extends AbstractController
         try {
             // y los subimos en la base de datos
             $entityManager->flush();
-            
+
             // Mostramos la plantilla pasándole el contacto como parámetro
             return $this->render('ficha_contacto.html.twig', ["contacto" => $contacto]);
         } catch (\Exception $e) {
@@ -152,14 +146,50 @@ final class ContactoController extends AbstractController
             ]);
         }
     }
-   
 
-    #[Route('/contacto/{codigo}', name: 'ficha_contacto')]
-    public function ficha(ManagerRegistry $doctrine, $codigo): Response
+    #[Route('/contacto/nuevo', name: 'nuevo')]
+    public function nuevo(ManagerRegistry $doctrine, Request $request): Response
+    {
+        $contacto = new Contacto(); // Creamos un objeto contacto (que representara el contacto que subiremos)
+
+        $formulario = $this->createForm(ContactoType::class, $contacto); // Creamos un formulario que usará de plantilla lo que hemos definido en ContactoType y
+        // vinculamos este formulario con el contacto que estamos creando, para que todos los datos que se escriban en el formulario se guarden en este contacto
+
+        $formulario->handleRequest($request);
+        // 'request' contiene toda la información que se envio (POST) desde el navegador, en este caso al enviar el formulario
+        // extrae estos datos (nombre, teléfono, email) y los "mapea" (escribe los datos dentro de la entidad, tal y como hemos configurado antes)
+        // si en el formulario escribio "Mateo", el handleRequest ejecutá '$contacto->setNombre("Mateo")'
+
+        // Si el formulario se ha enviado y es válido 
+        if ($formulario->isSubmitted() && $formulario->isValid()) {
+            $contacto = $formulario->getData(); // Metemos los datos introducidos en el formulario, dentro del contacto
+
+            // Guardamos estos datos en la base de datos
+            $entityManager = $doctrine->getManager();
+            $entityManager->persist($contacto);
+            $entityManager->flush();
+
+            // Una vez se haya enviado el formulario, redirigimos a otra plantilla que mostrará el contacto que hemos creado
+            return $this->redirectToRoute('ficha_contacto', ['contacto' => $contacto->getId()]);
+        }
+
+        // Renderizamos esta plantilla con el formulario, en el momento en el que el usuario entra en la URL '/contacto/nuevo' 
+        // cuando entra por primera vez o si hay errores y tiene que volver a enviar el formulario
+        return $this->render('nuevo.html.twig', array(
+            'formulario' => $formulario->createView()
+        ));
+        // array() -> lo renderizamos con un array porque es la manera más fácil de enviar varios datos a la vez (ya que un formulario es un conjunto de datos)
+        // createView() -> para que el usuario pueda ver el formulario (sin createView, twig no podría dibujar/renderizar el formulario)
+    }
+
+
+    #[Route('/contacto/{contacto}', name: 'ficha_contacto')] // he cambiado codigo por contacto porque sino sobreescribe el 
+    // nombre que le hemos dado a la variable/parametro en el return (ficha_contacto', ['contacto' ...])
+    public function ficha(ManagerRegistry $doctrine, $contacto): Response
     {
         $repositorio = $doctrine->getRepository(Contacto::class);
-        $contacto = $repositorio->find($codigo);
+        $contacto = $repositorio->find($contacto);
 
-        return $this->render('ficha_contacto.html.twig', ["contacto" => $contacto]);        
+        return $this->render('ficha_contacto.html.twig', ["contacto" => $contacto]);
     }
 }
