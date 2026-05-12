@@ -182,6 +182,41 @@ final class ContactoController extends AbstractController
         // createView() -> para que el usuario pueda ver el formulario (sin createView, twig no podría dibujar/renderizar el formulario)
     }
 
+    #[Route('/contacto/editar/{contactoId}', name: 'contacto_editar', requirements: ["contactoId" => "\d+"])]
+    // requirements -> es un array de restricciones
+    // contactoId -> es el parámetro que vamos a recibir
+    // \d+ -> es una expresión regular que significa que el parámetro debe ser un número (1 o más dígitos)
+
+    public function contacto_editar(ManagerRegistry $doctrine, Request $request, int $contactoId): Response
+    // 'int $contactoId' -> para convertirlo en entero (solo funciona si 'contactoId' es un número, por eso 'requirements' contiene '\d+')
+    {
+        // En este caso, obtenemos los datos del repositorio de contactos (la tabla Contactos con los datos que le hayamos puesto hasta ahora)
+        $repositorio = $doctrine->getRepository(Contacto::class);
+
+        $contacto = $repositorio->find($contactoId);
+        if ($contacto) {
+            $formulario = $this->createForm(ContactoType::class, $contacto);
+            $formulario->handleRequest($request);
+
+            if ($formulario->isSubmitted() && $formulario->isValid()) {
+                // insertar los datos en la base de datos es igual que en /contacto/nuevo
+                $contacto = $formulario->getData();
+
+                $entityManager = $doctrine->getManager();
+                $entityManager->persist($contacto);
+                $entityManager->flush();
+
+                return $this->redirectToRoute('ficha_contacto', ["contacto" => $contacto->getId()]);
+            }
+            return $this->render('nuevo.html.twig', array(
+                'formulario' => $formulario->createView(),
+            ));
+        } else {
+            return $this->render('ficha_contacto.html.twig', [
+                'contacto' => NULL // Al devolver NULL, nos mostrará 'Contacto no encontrado'
+            ]);
+        }
+    }
 
     #[Route('/contacto/{contacto}', name: 'ficha_contacto')] // he cambiado codigo por contacto porque sino sobreescribe el 
     // nombre que le hemos dado a la variable/parametro en el return (ficha_contacto', ['contacto' ...])
