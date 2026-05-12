@@ -9,6 +9,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 
 class ContactoType extends AbstractType
 {
@@ -17,7 +18,7 @@ class ContactoType extends AbstractType
         $builder
             ->add('nombre')
             ->add('telefono')
-            ->add('email')
+            ->add('email', EmailType::class, array('label' => 'Correo electrónico')) // ya no servirá escribir cualquier texto en este campo, ahora tendrá que tener formato correo 'x@x.com'
             ->add('provincia', EntityType::class, [
                 'class' => Provincia::class,
                 'choice_label' => 'id',
