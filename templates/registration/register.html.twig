@@ -10,6 +10,7 @@
     {{ form_start(registrationForm) }}
         {{ form_row(registrationForm.username) }} {# añadimos el campo de username en el formulario, aunque es opcional #}
         {{ form_row(registrationForm.email) }}
+        {{ form_row(registrationForm.name) }} {# añadimos el campo de name en el formulario, aunque es opcional #}
         {{ form_row(registrationForm.plainPassword, {
             label: 'Password'
         }) }}
