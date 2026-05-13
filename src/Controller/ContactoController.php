@@ -204,6 +204,11 @@ final class ContactoController extends AbstractController
             $entityManager->persist($contacto);
             $entityManager->flush();
 
+            // Si se pulsa el botón 'saveAndAdd', redirigimos de nuevo a 'nuevo' para añadir otro
+            if ($formulario->get('saveAndAdd')->isClicked()) {
+                return $this->redirectToRoute('nuevo');
+            }
+
             // Una vez se haya enviado el formulario, redirigimos a otra plantilla que mostrará el contacto que hemos creado
             return $this->redirectToRoute('ficha_contacto', ['contacto' => $contacto->getId()]);
         }
@@ -239,6 +244,11 @@ final class ContactoController extends AbstractController
             $formulario->handleRequest($request);
 
             if ($formulario->isSubmitted() && $formulario->isValid()) {
+                // Si se pulsa el botón 'eliminar', redirigimos a la ruta de borrado
+                if ($formulario->get('eliminar')->isClicked()) {
+                    return $this->redirectToRoute('eliminar_contacto', ['id' => $contacto->getId()]);
+                }
+
                 // insertar los datos en la base de datos es igual que en /contacto/nuevo
                 $contacto = $formulario->getData();
 

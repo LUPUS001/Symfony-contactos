@@ -23,7 +23,9 @@ class ContactoType extends AbstractType
                 'class' => Provincia::class,
                 'choice_label' => 'id',
             ])
-            ->add('save', SubmitType::class, array('label' => 'Enviar'));
+            ->add('save', SubmitType::class, ['label' => 'Enviar']) // Botón para guardar y finalizar
+            ->add('saveAndAdd', SubmitType::class, ['label' => 'Save and Add']) // Botón para guardar y volver a añadir otro contacto
+            ->add('eliminar', SubmitType::class, ['label' => 'Eliminar']); // Botón para eliminar el contacto (aunque no podra borrar nada porque aún no se ha creado el contacto en la BD)
         ;
         // El formulario renderiza los datos que hemos configurado aquí y en el mismo orden
     }

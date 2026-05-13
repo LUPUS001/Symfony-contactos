@@ -5,6 +5,9 @@
 
     {% if contacto %}
         {{ include('partials/datos_contacto.html.twig', {'contacto': contacto}) }}
+
+        {# En esta página explica cómo gestionar un formulario con varios botones. #}
+        <p><i>Para gestionar varios botones en un formulario de Symfony, usamos el método <code>isClicked()</code> del objeto <code>$form</code> en el controlador para detectar qué botón inició el envío de la petición.</i></p>
         
         {# Cada uno de los enlaces, nos lleva a una de las API del ContactoController #}
         
