@@ -12,7 +12,14 @@
 
     <h2>Bienvenido a la web de contactos.</h2>
     <p>Página de inicio</p>
+    
+    <a href="{{ path('nuevo') }}">Añadir contacto</a> {# redirige hacia la API 'nuevo' para crear un nuevo contacto #}
+
+    <ul>
     {% for contacto in contactos %}
-        {{ include ('partials/datos_contacto.html.twig', {'contacto': contacto}) }}
+        <li>
+            <a href="{{ path('ficha_contacto', {'contacto': contacto.id}) }}">{{ contacto.nombre }}</a> {# redirige hacia la API 'ficha_contacto' para ver los datos del contacto #}
+        </li>
     {% endfor %}
+    </ul>
 {% endblock %}

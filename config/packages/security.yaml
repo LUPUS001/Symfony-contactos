@@ -36,7 +36,7 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/contacto, roles: ROLE_USER }  # Solo usuarios logueados podrán acceder a esta ruta
+        # - { path: ^/contacto, roles: ROLE_USER }  # Lo comentamos para cumplir a raja tabla con el Reto II
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
 

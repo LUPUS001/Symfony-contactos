@@ -23,3 +23,5 @@ final class LoginController extends AbstractController
         ]);
     }
 }
+
+// para comprobar que has iniciado sesión, ejecuta --> composer require symfony/profiler

@@ -16,6 +16,11 @@ final class ContactoController extends AbstractController
     #[Route('/contacto/insertar/provincia', name: 'insertar_contacto_con_provincia')]
     public function insertarConProvincia(ManagerRegistry $doctrine): Response
     {
+        // Se ha de comprobar que el usuario está logueado y enviarlo a /index en caso contrario
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('index');
+        }
+
         // Recordemos que esta variable es la que nos permite trabajar con Query en este método
         $entityManager = $doctrine->getManager();
 
@@ -43,6 +48,11 @@ final class ContactoController extends AbstractController
     #[Route('/contacto/insertar/sinprovincia', name: 'insertar_contacto_sin_provincia')]
     public function insertarSinProvincia(ManagerRegistry $doctrine): Response
     {
+        // También serviría enviarlo a inicio
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('inicio');
+        }
+
         $entityManager = $doctrine->getManager();
         $repositorio = $doctrine->getRepository(Provincia::class);
 
@@ -68,6 +78,11 @@ final class ContactoController extends AbstractController
     #[Route('/contacto/buscar/conprovincia', name: 'buscar_contacto_con_provincia')]
     public function buscarContactoConProvincia(ManagerRegistry $doctrine): Response
     {
+        // Se ha de comprobar que el usuario está logueado y enviarlo a /index en caso contrario
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('index');
+        }
+
         $repositorio = $doctrine->getRepository(Contacto::class);
 
         $contacto = $repositorio->find(11);
@@ -86,6 +101,11 @@ final class ContactoController extends AbstractController
     #[Route('/contacto/buscar/{texto}', name: 'buscar_contacto')]
     public function buscar(ManagerRegistry $doctrine, $texto): Response
     {
+        // Se ha de comprobar que el usuario está logueado y enviarlo a /index en caso contrario
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('index');
+        }
+
         $contactoABuscar = $doctrine->getRepository(Contacto::class)->findByName($texto);
 
         return $this->render('lista_contactos.html.twig', [
@@ -98,6 +118,11 @@ final class ContactoController extends AbstractController
     #[Route('/contacto/update/{codigo?1}', name: 'update')]
     public function update(ManagerRegistry $doctrine, $codigo): Response
     {
+        // Se ha de comprobar que el usuario está logueado y enviarlo a /index en caso contrario
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('index');
+        }
+
         $entityManager = $doctrine->getManager();
 
         // Se coge el repositorio de la entidad 'Contacto' o de la que se quiera
@@ -127,6 +152,11 @@ final class ContactoController extends AbstractController
     #[Route('/contacto/delete/{id}', name: 'eliminar_contacto')]
     public function delete(ManagerRegistry $doctrine, $id): Response
     {
+        // Se ha de comprobar que el usuario está logueado y enviarlo a /index en caso contrario
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('index');
+        }
+
         $entityManager = $doctrine->getManager();
         $repositorio = $doctrine->getRepository(Contacto::class);
         $contacto = $repositorio->find($id);
@@ -150,6 +180,11 @@ final class ContactoController extends AbstractController
     #[Route('/contacto/nuevo', name: 'nuevo')]
     public function nuevo(ManagerRegistry $doctrine, Request $request): Response
     {
+        // Se ha de comprobar que el usuario está logueado y enviarlo a /index en caso contrario
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('index');
+        }
+
         $contacto = new Contacto(); // Creamos un objeto contacto (que representara el contacto que subiremos)
 
         $formulario = $this->createForm(ContactoType::class, $contacto); // Creamos un formulario que usará de plantilla lo que hemos definido en ContactoType y
@@ -190,6 +225,11 @@ final class ContactoController extends AbstractController
     public function contacto_editar(ManagerRegistry $doctrine, Request $request, int $contactoId): Response
     // 'int $contactoId' -> para convertirlo en entero (solo funciona si 'contactoId' es un número, por eso 'requirements' contiene '\d+')
     {
+        // Se ha de comprobar que el usuario está logueado y enviarlo a /index en caso contrario
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('index');
+        }
+
         // En este caso, obtenemos los datos del repositorio de contactos (la tabla Contactos con los datos que le hayamos puesto hasta ahora)
         $repositorio = $doctrine->getRepository(Contacto::class);
 
@@ -218,10 +258,15 @@ final class ContactoController extends AbstractController
         }
     }
 
-    #[Route('/contacto/{contacto}', name: 'ficha_contacto')] // he cambiado codigo por contacto porque sino sobreescribe el 
+    #[Route('/contacto/{contacto?1}', name: 'ficha_contacto')] // he cambiado codigo por contacto porque sino sobreescribe el 
     // nombre que le hemos dado a la variable/parametro en el return (ficha_contacto', ['contacto' ...])
     public function ficha(ManagerRegistry $doctrine, $contacto): Response
     {
+        // Se ha de comprobar que el usuario está logueado y enviarlo a /index en caso contrario
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('index');
+        }
+
         $repositorio = $doctrine->getRepository(Contacto::class);
         $contacto = $repositorio->find($contacto);
 

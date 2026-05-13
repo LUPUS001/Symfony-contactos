@@ -5,6 +5,17 @@
 
     {% if contacto %}
         {{ include('partials/datos_contacto.html.twig', {'contacto': contacto}) }}
+        
+        {# Cada uno de los enlaces, nos lleva a una de las API del ContactoController #}
+        
+        <a href="{{ path('contacto_editar', {'contactoId': contacto.id}) }}">Editar</a>
+        {# - path('contacto_editar'..) --> ruta hacia la API  
+           - 'contactoId --> el parámetro que recibe la API
+           - contacto.id --> sacamos la .id del parámetro que el método(API) le pasa al template por el render   
+        #}
+        <a href="{{ path('eliminar_contacto', {'id': contacto.id}) }}">Eliminar</a>
+        
+        <a href="{{ path('inicio') }}">Volver</a>
     {% else %}
         <h4>Contacto no encontrado</h4>
     {% endif %}    
